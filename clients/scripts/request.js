@@ -1,5 +1,5 @@
 async function postData(resourceURI = '', data = {}, method = 'POST') {
-  const response = await fetch(`http://localhost:5001/api/${resourceURI}`, {
+  const response = await fetch(`https://note-app-v2.onrender.com/api/${resourceURI}`, {
     method: method, // *GET, POST, PUT, DELETE, etc.
     mode: 'cors', // no-cors, *cors, same-origin
     cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
@@ -19,7 +19,7 @@ async function postData(resourceURI = '', data = {}, method = 'POST') {
 }
 
 async function getData(resourceURI = '') {
-  const response = await fetch(`http://localhost:5001/api/${resourceURI}`, {
+  const response = await fetch(`https://note-app-v2.onrender.com/api/${resourceURI}`, {
     method: 'GET', // *GET, POST, PUT, DELETE, etc.
     mode: 'cors', // no-cors, *cors, same-origin
     cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
