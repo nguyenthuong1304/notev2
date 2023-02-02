@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./css/login.css">
+    <link rel="stylesheet" href="./css/toast.css">
+    <title>Document</title>
+</head>
+
+<body>
+    <div class="toast" id="toast">
+        <div class="toast-body"></div>
+    </div>
+    <div class="container" id="container">
+        <div class="form-container sign-up-container">
+            <form action="#">
+                <h1>Tạo mới tài khoản</h1>
+                <input type="text" placeholder="Họ và tên" id="name" />
+                <input type="text" placeholder="Tên tài khoản" id="username" />
+                <input type="text" placeholder="Email" id="email" />
+                <input type="password" placeholder="Mật khẩu" id="password" />
+                <button type="button" id="btn-register">Đăng ký</button>
+            </form>
+        </div>
+        <div class="form-container sign-in-container">
+            <form action="#">
+                <h1>Đăng nhập</h1>
+                <input type="text" placeholder="Tên tài khoản" id="lg-username" />
+                <input type="password" placeholder="Mật khẩu" id="lg-password" />
+                <a href="#">Quên mật khẩu?</a>
+                <button id="btn-login">Đăng nhập</button>
+            </form>
+        </div>
+        <div class="overlay-container">
+            <div class="overlay">
+                <div class="overlay-panel overlay-left">
+                    <h1>Xin chào người bạn!</h1>
+                    <p>Hãy đăng kí để cùng nhau trải nghiệm dịch vụ này</p>
+                    <button class="ghost" id="signIn">Sign In</button>
+                </div>
+                <div class="overlay-panel overlay-right">
+                    <h1>Chào mừng bạn trở lại!</h1>
+                    <p>Vui lòng đăng nhập để trải nghiệm !!</p>
+                    <button class="ghost" id="signUp">Đăng ký</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+<script src="./scripts/toast.js"></script>
+<script src="./scripts/request.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        if (localStorage.getItem('accessToken')) {
+            location.href = '/index.html'
+        };
+    });
+
+    const signUpButton = document.getElementById('signUp');
+    const signInButton = document.getElementById('signIn');
+    const loginBtn = document.getElementById('btn-login');
+    const registerBtn = document.getElementById('btn-register');
+    const container = document.getElementById('container');
+
+    signUpButton.addEventListener('click', () => {
+        container.classList.add("right-panel-active");
+    });
+
+    signInButton.addEventListener('click', () => {
+        container.classList.remove("right-panel-active");
+    });
+
+    loginBtn.addEventListener('click', async () => {
+        const username = document.getElementById('lg-username').value
+        const password = document.getElementById('lg-password').value
+
+        if (username.length < 6 || password.length < 6) {
+            showToast('Sai mật khẩu hoặc tài khoản', 'warning')
+        } else {
+            postData('auth/login', { username, password })
+                .then(({ accessToken }) => {
+                    localStorage.setItem('accessToken', accessToken)
+
+                    location.href = '/';
+                })
+                .catch(err => console.log(err))
+        }
+    });
+
+    registerBtn.addEventListener('click', async () => {
+        const username = document.getElementById('username')
+        const email = document.getElementById('email')
+        const name = document.getElementById('name')
+        const password = document.getElementById('password')
+
+        const data = await postData('auth/register', { 
+            username: username.value,
+            password: password.value,
+            name: name.value,
+            email: email.value,
+        })
+
+        if (data.errors) {
+            handleInvalidate(data.errors)
+        } else {
+            showToast(data.message);
+            username.value = '';
+            email.value = '';
+            name.value = '';
+            password.value = '';
+            signInButton.click();
+        }
+    });
+</script>
+
+</html>
